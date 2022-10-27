@@ -1,122 +1,83 @@
 import pandas as pd
 import networkx as nx
-from connectivity_metric import *
+import conmetric
+import condata
 
-# TODO fix this class. Not very nice like this. Works though
 class Connectivity:
 
-    #def __init__(self, metric_type, strategy, weight, target, threshold_min, threshold_max, mc, con_data):
-    def __init__(self, strategy, weight, target, con_data):
+    def __init__(self, strategy, weight, target=False):
         self.strategy = strategy
-        #self.metric_type = m_type
         self.weight = weight
+        # target is boolean flag: true if target setting, false if proportion setting
         self.target = target
-        self.con_data = con_data
-        self.metrics = {}
+        self.connectivity_data = []
 
-    def add_metric(self, metric_type):
-        self.metrics[metric_type] = ConnectivityMetric(metric_type, self.con_data)
-        self.metrics[metric_type].set_connectivity_metrics()
+    #def __init__(self, strategy, weight, target):
+    #    self.strategy = strategy
+    #    self.weight = weight
+    #    # target is boolean flag: true if target setting, false if proportion setting
+    #    self.target = target
+    #    self.connectivity_data = []
+
+    def get_connectivity_data(self):
+        return self.connectivity_data
+
+    def set_metric(self, metric_type):
+        for data in self.connectivity_data:
+            data.set_connectivity_metrics(metric_type)
+
+    def set_connectivity_matrix(self, matrix, name):
+        temp_data = condata.ConData(name)
+        temp_data.set_connectivity_matrix(matrix)
+        self.connectivity_data.append(temp_data)
+
+    #TODO check if this works
+    def set_connectivity_edgelist(self, edgelist, name):
+        temp_data = condata.ConData(name)
+        temp_data.set_connectivity_edgelist(edgelist)
+        self.connectivity_data.append(temp_data)
+
+    def set_habitat_connectivity_edgelist(self, edgelist):
+        habitat = [y for x, y in edgelist.groupby('habitat')]
+        for h in habitat:
+            nh = pd.DataFrame(h).reset_index(drop=True)
+            name = nh['habitat'][0]
+            temp_data = condata.ConData(name)
+            temp_data.set_connectivity_habitat_edgelist(h)
+            self.connectivity_data.append(temp_data)
 
     def get_metric_values(self, name):
-        return self.metrics[name].values
+        metrics = []
+        for data in self.connectivity_data:
+            metrics.append(data.get_metric_values(name))
+        return metrics
+
+    def get_normalized_metric_values(self, name):
+        metrics = []
+        for data in self.connectivity_data:
+            metric_values = data.get_metric_values(name)
+            normalized_data = (metric_values['value'] - metric_values['value'].min())/(metric_values['value'].max() - metric_values['value'].min())
+            metrics.append(normalized_data)
+        return metrics
 
     def get_metric(self, name):
-        return self.metrics[name]
+        metrics = []
+        for data in self.connectivity_data:
+            return data.get_metric(name)
+        return metrics
 
     def drop_smaller_value(self, name, threshold):
-        self.metrics[name].drop_smaller(threshold)
+        for data in self.connectivity_data:
+            data.drop_smaller_value(name, threshold)
 
     def drop_smaller_type(self, name, min_type):
-        self.metrics[name].drop_smaller_type(min_type)
+        for data in self.connectivity_data:
+            data.drop_smaller_type(name, min_type)
 
     def drop_greater_value(self, name, max_type):
-        self.metrics[name].drop_greater(max_type)
+        for data in self.connectivity_data:
+            data.drop_greater(name, max_type)
 
     def set_values_to_one(self, name):
-        self.metrics[name].set_values_to_one()
-#    def sum(self):
-#        return self.all_values['value'].sum()
-#
-#    def mean(self):
-#        return self.all_values['value'].mean()
-#
-#    def median(self):
-#        return self.all_values['value'].median()
-#
-#    def indegree(self, pu, g):
-#        pu_id = []
-#        values = []
-#        total_pu = []
-#        total_values = []
-#        for unit in pu['id']:
-#            in_deg = g.in_degree(unit)
-#            # No target set, use weighted values
-#            if self.threshold_min is None and self.threshold_max is None:
-#                values.append(in_deg)
-#                pu_id.append(unit)
-#            # Only max threshold set
-#            elif self.threshold_min is None:
-#                if in_deg < self.threshold_max:
-#                    values.append(1)
-#                    pu_id.append(unit)
-#            # Only min threshold set
-#            else:
-#                if in_deg > self.threshold_min:
-#                    values.append(1)
-#                    pu_id.append(unit)
-#            total_values.append(in_deg)
-#            total_pu.append(pu_id)
-#
-#            #pu_id.append(unit)
-#        #for node in g:
-#        #    pu.append(node)
-#        #    values.append(g.in_degree(node))
-#        self.all_values = pd.DataFrame(list(zip(total_pu, total_values)), columns = ['pu', 'value'])
-#        return pd.DataFrame(list(zip(pu_id, values)), columns = ['pu', 'value'])
-#
-#    def outdegree(self, pu, g):
-#        pu = []
-#        values = []
-#        for node in g:
-#            pu.append(node)
-#            values.append(g.out_degree(node))
-#        return pd.DataFrame(list(zip(pu, values)), columns = ['pu', 'value'])
-#
-#    def betcent(self, pu, g):
-#        pu_id = []
-#        value = []
-#        values = nx.betweenness_centrality(g, normalized=True)
-#        total_pu = []
-#        total_values = []
-#        #print(values)
-#        for k,v in values.items():
-#            if self.threshold_min is None and self.threshold_max is None:
-#                value.append(v)
-#                pu_id.append(k)
-#            # Only max threshold set
-#            elif self.threshold_min is None:
-#                if v < self.threshold_max:
-#                    value.append(1)
-#                    pu_id.append(k)
-#            # Only min threshold set
-#            else:
-#                if v > self.threshold_min:
-#                    value.append(1)
-#                    pu_id.append(k)
-#            #pu.append(k)
-#            #value.append(v)
-#            total_values.append(v)
-#            total_pu.append(k)
-#
-#        self.all_values = pd.DataFrame(list(zip(total_pu, total_values)), columns = ['pu', 'value'])
-#        return pd.DataFrame(list(zip(pu_id, value)), columns = ['pu', 'value'])
-#
-#    #@staticmethod
-#    def get_connectivity_metrics(self, pu, g):
-#        do = f"{self.m_type}"
-#        if hasattr(self, do) and callable(func := getattr(self, do)):
-#            return func(pu, g)
-#        else:
-#            error = "Error: metric not implemented"
-#            sys.exit(error)
+        for data in self.connectivity_data:
+            data.set_values_to_one(name)
