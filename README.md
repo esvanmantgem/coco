@@ -1,6 +1,6 @@
 # Coco: Conservation Design for Optimal Ecological Connectivity
 
-Coco provides and open source ILP solution for variations of the Reserve Selection problem including connectivity functionality
+Coco provides an open source ILP solution for variations of the Reserve Selection problem including connectivity functionality.
 
 Note: this is a pre-release version and not a full version yet
 
@@ -14,12 +14,20 @@ Note: this is a pre-release version and not a full version yet
 * Seaborn 0.12.0
 
 #### Installs
+We recommend using a conda environment (https://conda.io) and install the following packages:
+
 * Geopandas:
+```
 conda install --channel conda-forge geopandas
-* Gurobi (inside conda env):
+```
+* Gurobi: a Gurobi license is needed to run Coco (https://www.gurobi.com/). Inside the conda environment run:
+```
 python -m pip install gurobipy
-* Seaborn
+```
+* Seaborn:
+```
 conda install -c anaconda seaborn
+```
 
 To run go to code directory:
 ```
