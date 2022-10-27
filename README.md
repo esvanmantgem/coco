@@ -4,7 +4,7 @@ Coco provides an open source ILP solution for variations of the Reserve Selectio
 
 Note: this is a pre-release version and not a full version yet
 
-#### Install dependencies:
+### Install dependencies:
 
 We recommend using a conda environment (https://conda.io) with Python version 3.10.6 and install the following packages:
 
@@ -21,7 +21,7 @@ python -m pip install gurobipy
 conda install -c anaconda seaborn
 ```
 
-#### Dependencies
+### Dependencies
 
 * Python 3.10.6
 * Geopandas 0.11.1
@@ -31,7 +31,7 @@ conda install -c anaconda seaborn
 * Seaborn 0.12.0
 To run go to code directory:
 
-#### How to run
+### How to run
 ```
 cd src
 ```
