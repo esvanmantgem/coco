@@ -1,7 +1,9 @@
 # Coco: Conservation Design for Optimal Ecological Connectivity
-Note: this work is in preparation and not a full version
 
-ILP solution for variations of the Reserve Selection problem including connectivity functionality
+Coco provides and open source ILP solution for variations of the Reserve Selection problem including connectivity functionality
+
+Note: this is a pre-release version and not a full version yet
+
 
 #### Dependencies
 * Python 3.10.6
