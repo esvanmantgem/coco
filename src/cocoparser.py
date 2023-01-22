@@ -6,12 +6,15 @@ def parse_args():
     parser.add_argument('-output', type=str, required=True, help='Folder to store result files in')
     parser.add_argument('-strategy', required=True, choices=['cf', 'sd',  'cost', 'cost-con', 'con',  'con-blm', 'cost-con-live'], help='Strategy to calculate the metric')
     parser.add_argument('-blm', type=float, help='The value of the Boundary Length Modifier')
+    parser.add_argument('-complete-graph', action='store_true', help='Indicates the data contains a complete graph')
 
     # conservation feature metric parsing options
     #if parser.parse_known_args()[0].strategy.lower().startswith('cf'):
     if parser.parse_known_args()[0].strategy.lower() == 'cf':
         parser.add_argument('-mc', action='store_true', help='Set all connecitivy metric values to 1')
-        parser.add_argument('-metric', action='append', required=True, choices=['indegree', 'outdegree', 'betcent'], help='Which connectivity metric to use')
+        parser.add_argument('-metric', action='append', required=True, choices=['ec', 'indegree', 'outdegree', 'betcent'], help='Which connectivity metric to use')
+        # Only if EC
+        parser.add_argument('--pu-data', type=str, help='File containing the connectivity habitat planning unit values')
         # TODO: now no way to mix metric min/max type and metric min/max
         # threshold values (min and max) parser
         min_value_parser = parser.add_mutually_exclusive_group()
@@ -36,8 +39,11 @@ def parse_args():
     # cost and metric optimization parsing options
     if parser.parse_known_args()[0].strategy.lower() == 'cost-con':
         parser.add_argument('-mc', action='store_true', help='Set all connecitivy metric values to 1')
-        parser.add_argument('-metric', action='append', required=True, choices=['indegree', 'outdegree', 'betcent'], help='Which connectivity metric to use')
+        parser.add_argument('-metric', action='append', required=True, choices=['ec', 'indegree', 'outdegree', 'betcent'], help='Which connectivity metric to use')
         parser.add_argument('-metric-weight',type=float, help='weight of the metric in the objectivve function')
+        parser.add_argument('-cost-weight',type=float, help='weight of the metric in the objectivve function')
+        # Only if EC
+        parser.add_argument('--pu-data', type=str, help='File containing the connectivity habitat planning unit values')
         # TODO: now no way to mix metric min/max type and metric min/max
         # threshold values (min and max) parser
         min_value_parser = parser.add_mutually_exclusive_group()
@@ -76,10 +82,11 @@ def parse_args():
     # metric only optimization parsing options
     if parser.parse_known_args()[0].strategy.lower() == 'con':
         parser.add_argument('-mc', action='store_true', help='Set all connecitivy metric values to 1')
-        parser.add_argument('-metric', action='append', required=True, choices=['indegree', 'outdegree', 'betcent'], help='Which connectivity metric to use')
+        parser.add_argument('-metric', action='append', required=True, choices=['indegree', 'outdegree', 'betcent', 'ec'], help='Which connectivity metric to use')
         parser.add_argument('-max-cost',type=float, required=True, help='max cost of the conservation area')
         parser.add_argument('-min-cost',type=float, help='min cost of the conservation area')
         # TODO: now no way to mix metric min/max type and metric min/max
+        parser.add_argument('--pu-data', type=str, help='File containing the connectivity habitat planning unit values')
         # threshold values (min and max) parser
         min_value_parser = parser.add_mutually_exclusive_group()
         min_value_parser.add_argument('-metric-min', action='append', type=float, help='Minimum value to use when discritzing metric')

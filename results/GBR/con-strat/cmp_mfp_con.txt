@@ -1,0 +1,19 @@
+Marxan Connect Pre:
+Nr of Nodes (Total cost):  59 
+Metric total:  75644.72334331434
+Metric per node/cost:  1282.1139549714296
+
+Marxan Connect Post:
+Nr of Nodes (Total cost):  59 
+Metric total:  4514.0
+Metric per node/cost:  76.50847457627118
+
+Coco Pre:
+Nr of Nodes (Total cost):  59 
+Metric total:  111044.26606920989
+Metric per node/cost:  1882.1062045628794
+
+Coco Post:
+Nr of Nodes (Total cost):  59 
+Metric total:  4544.0
+Metric per node/cost:  77.01694915254237

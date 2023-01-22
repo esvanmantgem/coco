@@ -1,0 +1,28 @@
+name,value
+solver time,1023.7309653759003
+total time,1973.7236897945404
+objective value,17485.6141346915
+gap,0.032962752391514756
+total cost,1191.0
+input,../data/BCMCA_input_data/EC
+output,../tests/BCMCA/brandt/gap005-con-ec-betcent-bestSpec-cost1191
+strategy,con
+blm,
+complete_graph,True
+mc,False
+metric,"['ec', 'betcent']"
+max_cost,1191.0
+min_cost,
+pu_data,../data/BCMCA_input_data/EC/quality.csv
+metric_min,
+metric_min_type,
+metric_max,
+metric_max_type,
+con_matrix,
+con_edgelist,
+habitat_edgelist,['../data/BCMCA_input_data/EC/resistance.csv']
+gap,0.05
+time_limit,
+gurobi_log,
+gurobi_threads,
+gurobi_mem,

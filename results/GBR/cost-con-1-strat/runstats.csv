@@ -1,0 +1,25 @@
+name,value
+solver time,0.17264580726623535
+total time,1.5564279556274414
+objective value,41.231675266636664
+gap,0.0
+total cost,57.0
+input,input_mfp
+output,output
+strategy,cost-con
+blm,
+mc,False
+metric,['betcent']
+metric_weight,1.0
+metric_min,
+metric_min_type,['median']
+metric_max,
+metric_max_type,
+con_matrix,
+con_edgelist,
+habitat_edgelist,['IsolationByDistance_mean.csv']
+gap,
+time_limit,600
+gurobi_log,
+gurobi_threads,
+gurobi_mem,

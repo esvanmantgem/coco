@@ -11,12 +11,12 @@ bios = 'input/bioregion_short.shp'
 hexpus = 'input/hex_planning_units.shp'
 back = gpd.read_file(bios)
 
-reef = True
+reef = False
 mc = False
 
 #### COCO file
-sol = pd.read_csv('../tests/mfp/con-strat/solution.csv')
-#sol = pd.read_csv('../tests/hexflow/cost_only/solution.csv')
+#sol = pd.read_csv('../tests/mfp/con-strat/solution.csv')
+sol = pd.read_csv('../tests/hexflow/con-with-cost63/solution.csv')
 #sol = pd.read_csv('../src/output/solution.csv')
 #sol = pd.read_csv('input/solution.csv')
 

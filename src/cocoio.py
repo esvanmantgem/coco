@@ -45,6 +45,10 @@ def read_connectivity_data(path, args):
             files.append(pd.read_csv(open_file(path, edgelist)))
     return files
 
+def read_pu_data(path, file):
+    dft = pd.read_csv(open_file(path, file))
+    return dft
+
 def read_connectivity_matrix(file):
     ''' read connectivity matrix '''
     dft = pd.read_csv(file)

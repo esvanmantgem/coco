@@ -4,8 +4,9 @@ import sys
 
 class ConnectivityMetric:
 
-    def __init__(self, metric_type):
+    def __init__(self, metric_type, g):
         self.metric_type = metric_type
+        self.g = g
         self.values = pd.DataFrame()
         self.mean = 0
         self.sum = 0
@@ -30,34 +31,78 @@ class ConnectivityMetric:
     def set_target(self, target):
         self.target = target
 
-    def indegree(self, g):
+    def indegree(self):
+        print("------------calcuting indegree values -----------------")
         temp_values = []
-        for unit in g.nodes():
-            temp_values.append(g.in_degree(unit))
-        self.values = pd.DataFrame(list(zip(g.nodes(), temp_values)), columns = ['pu', 'value'])
+        for unit in self.g.nodes():
+            temp_values.append(self.g.in_degree(unit))
+        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = ['pu', 'value'])
+        print(self.values)
         self.calculate_standards()
 
-    def outdegree(self, g):
+    def outdegree(self):
+        print("------------calcuting outdegree values -----------------")
         temp_values = []
-        for unit in g.nodes():
-            temp_values.append(g.out_degree(unit))
-        self.values = pd.DataFrame(list(zip(g.nodes(), temp_values)), columns = ['pu', 'value'])
+        for unit in self.g.nodes():
+            temp_values.append(self.g.out_degree(unit))
+        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = ['pu', 'value'])
+        print(self.values)
         self.calculate_standards()
 
-    def betcent(self, g):
-        all_betcent = nx.betweenness_centrality(g, normalized=False)
+    def betcent(self):
+        print("------------calcuting betcent values -----------------")
+        all_betcent = nx.betweenness_centrality(self.g, normalized=False, weight=None)
         #all_betcent_norm = nx.betweenness_centrality(g, normalized=True)
         #print(all_betcent_norm)
         temp_values = []
         for k,v in all_betcent.items():
+            print(k ,v)
             temp_values.append(v)
-        self.values = pd.DataFrame(list(zip(g.nodes(), temp_values)), columns = ['pu', 'value'])
+        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = ['pu', 'value'])
+        #print(self.values)
         self.calculate_standards()
 
-    def set_connectivity_metrics(self, g):
+    def ec(self):
+        print("------------calcuting EC values -----------------")
+        '''Calculate the EC metric: for each pair of pu (i.e., edge):
+        for each node i: for each neighbor j: a_i * a_j * p_ij
+        Where a_i is qualitative value of pu i and p_ij a quantification of the
+        1/distance between planning units i and j
+
+        Returns a list of tuples (i, j, val)
+        '''
+
+        i_s = []
+        j_s = []
+        vals = []
+        for i, a_i in nx.get_node_attributes(self.g, "value").items():
+            for j in self.g.neighbors(i):
+                a_j =  self.g.nodes[j]["value"]
+                p_ij = self.g.edges[(i,j)]["value"]
+                val = a_i * a_j * p_ij
+                i_s.append(i)
+                j_s.append(j)
+                vals.append(val)
+        self.values = pd.DataFrame(list(zip(i_s, j_s, vals)), columns = ['pu1', 'pu2', 'value'])
+        print(self.values)
+        # TODO check "for each map"
+        self.calculate_standards()
+#        print(self.values['value'])
+#for neighbor in G.neighbors(x):
+#    print(G.nodes[neighbor]["time"])
+        #for node, weight in nx.get_edge_attributes(g, "value"):
+        #    print("node: ", node, " has weight ", weight)
+        #    for n, k in g.neighbors(node):
+        #        print(n, k)
+        #print(nx.get_node_attributes(g, "value"))
+#        for edge, weight in nx.get_edge_attributes(g, "value").items():
+#            print("edge:", edge)
+#            print("weight:", weight)
+
+    def set_connectivity_metrics(self):
         do = f"{self.metric_type}"
         if hasattr(self, do) and callable(func := getattr(self, do)):
-            return func(g)
+            return func()
         else:
             error = "Error: metric not implemented"
             sys.exit(error)

@@ -1,4 +1,5 @@
 import pandas as pd
+import networkx as nx
 import seaborn as sns
 import os
 import matplotlib.pyplot as plt
@@ -19,7 +20,7 @@ class SolutionArea:
         total_time = self.timer.setup_time()
 
         values = [solver_time, total_time, self.obj_val, self.gap, self.total_cost(conservation)]
-        names = ['solver time', 'total time', 'objective value', 'gap', 'total cost']
+        names = ['solver time', 'total time', 'objective value', 'gap-to-opt', 'total cost']
         return pd.DataFrame(list(zip(names, values)), columns = ['name', 'value'])
 
     # puvspr: species, pu, amount
@@ -68,12 +69,15 @@ class SolutionArea:
         avg_per_node = []
         data_name = []
 
-
-        for condata in connectivity.get_connectivity_data():
+        #print(data.g.nodes.data('value'))
+        for condata in connectivity.connectivity_data:
+            print("condata: ", condata.name)
             for metric_name in condata.metrics:
+                print("metric: ", metric_name)
                 data_name.append(condata.name)
                 metric = condata.get_metric(metric_name)
-                self.print_metric_values(metric)
+                print(condata.name, " is next, with metric: ", metric_name)
+                #self.print_metric_values(metric)
                 min_value.append(metric.min)
                 max_value.append(metric.max)
                 min_threshold.append(metric.min_threshold)
@@ -89,8 +93,31 @@ class SolutionArea:
                 reached.append(conn.sum())
                 avg_per_node.append(avg)
                 print("\n", condata.name, "\nMetric: ", metric_name, "\nTotal:", metric.sum, "\nTarget:", metric.target, "\nTotal metric:", conn.sum(), "\nAvg per pu:", avg)
-        self.metrics_total = pd.DataFrame(list(zip(data_name, name, total, min_value, max_value, min_threshold, max_threshold, target, reached, avg_per_node)), columns = ['data', 'metric', 'total', 'min', 'max', 'min_threshold', 'max_threshold', 'target', 'total metric', 'avg_per_pu'])
+        self.metrics_total = pd.DataFrame(list(zip(data_name, name, total, min_value, max_value, min_threshold, max_threshold, target, reached, avg_per_node)), columns = ['data', 'metric', 'total', 'min', 'max', 'min_threshold', 'max_threshold', 'target', 'total_metric', 'avg_per_pu'])
         return self.metrics_total
+
+        #for condata in connectivity.connectivity_data:
+        #    for metric_name in condata.metrics:
+        #        data_name.append(condata.name)
+        #        metric = condata.get_metric(metric_name)
+        #        self.print_metric_values(metric)
+        #        min_value.append(metric.min)
+        #        max_value.append(metric.max)
+        #        min_threshold.append(metric.min_threshold)
+        #        max_threshold.append(metric.max_threshold)
+        #        total.append(metric.sum)
+        #        name.append(metric_name)
+        #        target.append(metric.target)
+        #        #post_conn = self.analyze_post_connectivity(metric_name, condata)
+        #        #post_metric.append(post_conn.sum())
+        #        #avg = post_conn.sum() / len(post_conn)
+        #        conn = self.analyze_connectivity(metric_name, condata, self.pux.copy())
+        #        avg = conn.sum() / len(conn)
+        #        reached.append(conn.sum())
+        #        avg_per_node.append(avg)
+        #        print("\n", condata.name, "\nMetric: ", metric_name, "\nTotal:", metric.sum, "\nTarget:", metric.target, "\nTotal metric:", conn.sum(), "\nAvg per pu:", avg)
+        #self.metrics_total = pd.DataFrame(list(zip(data_name, name, total, min_value, max_value, min_threshold, max_threshold, target, reached, avg_per_node)), columns = ['data', 'metric', 'total', 'min', 'max', 'min_threshold', 'max_threshold', 'target', 'total_metric', 'avg_per_pu'])
+        #return self.metrics_total
 
     def total_cost(self, conservation):
         temp_pux = self.pux.merge(conservation.pu['cost'], left_on='pu', right_on=conservation.pu['id'], how='left')
@@ -107,16 +134,47 @@ class SolutionArea:
 
         return sol_metric.values['value']
 
-    def analyze_connectivity(self, metric_name, connectivity, co_best):
-        metric = connectivity.get_metric(metric_name)
-        g = connectivity.g
-        sol_metric = ConnectivityMetric(metric_name)
-        sol_metric.g = g
-        sol_metric.set_connectivity_metrics(sol_metric.g)
+    def analyze_connectivity(self, metric_name, condata, co_best):
 
-        cvalues = sol_metric.values.merge(co_best['x'], left_on='pu', right_on=co_best['pu'])
-        cvalues = cvalues[cvalues['x'] > 0]
-        return cvalues['value']
+        if metric_name == 'ec':
+            metric = condata.get_metric(metric_name)
+            #g = connectivity.g
+            print(metric.metric_type)
+            sol_metric = ConnectivityMetric(metric_name, metric.g)
+
+            #sol_metric.g = connectivity["ec"].g
+            sol_metric.set_connectivity_metrics()
+            #sol_metric.set_connectivity_metrics(sol_metric.g)
+            #print("cobest values")
+            #print(co_best)
+            co_best = co_best[co_best['x'] > 0]
+            #print("cobest values > 1")
+            #print(co_best)
+            #print("solmet values")
+            #print(sol_metric.values)
+            cvalues = sol_metric.values.merge(co_best['x'], left_on='pu1', right_on=co_best['pu'])
+            cvalues.rename(columns={'x': 'x1'}, inplace=True)
+            #print("x1")
+            #print(cvalues)
+            cvalues = cvalues.merge(co_best['x'], left_on='pu2', right_on=co_best['pu'])
+            cvalues.rename(columns={'x': 'x2'}, inplace=True)
+            #print("x2")
+            #print(cvalues)
+            #cvalues = cvalues[cvalues['x1'] > 0]
+            #cvalues = cvalues[cvalues['x2'] > 0]
+            #print("only 1s")
+            #print(cvalues)
+            return cvalues['value']
+        else:
+            metric = condata.get_metric(metric_name)
+            #g = connectivity.g
+            sol_metric = ConnectivityMetric(metric_name, metric.g)
+            #sol_metric.g = g
+            #sol_metric.set_connectivity_metrics(sol_metric.g)
+            sol_metric.set_connectivity_metrics()
+            cvalues = sol_metric.values.merge(co_best['x'], left_on='pu', right_on=co_best['pu'])
+            cvalues = cvalues[cvalues['x'] > 0]
+            return cvalues['value']
 
     def show_map(self, path):
         # plot map
