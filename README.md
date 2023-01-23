@@ -16,10 +16,6 @@ conda install --channel conda-forge geopandas
 ```
 python -m pip install gurobipy
 ```
-* Seaborn 0.12.0:
-```
-conda install -c anaconda seaborn
-```
 
 ### Dependencies
 
@@ -37,6 +33,35 @@ cd src
 ```
 To run Coco enter:
 ```
-python main.py --help
+python main.py -strategy <strategy_name> [strategy params]
 ```
-This will show all available parameter settings
+The parameter `-strategy` sets the RSP variant Coco runs. Currently, Coco has three RSP variants installed: RSP with Connectivity Features (RSP-CF), RSP with Cost Connectivity (RSP-CC) and RSP with Connectivity (RSP-Con).
+
+#### Global parameter settings
+The following parameters are available for all RSP variants.
+-input
+-output
+-strategy
+-metric
+-metric-min
+-metric-min-type
+-metric-max
+-metric-max-type
+--con-matrix
+--con-edgelist
+--habitat-edgelist
+--pu-data
+
+
+CF:
+-metric-prop
+-metric-target
+
+CC:
+-metric-weight
+-cost-weight
+
+CON:
+-max-cost
+-min-cost
+
