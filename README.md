@@ -8,29 +8,36 @@ Note: this is a pre-release version and not a full version yet
 
 We recommend using a conda environment (https://conda.io) with Python version 3.10.6 and install the following packages:
 
-* Geopandas 0.11.1:
-```
-conda install --channel conda-forge geopandas
-```
 * Gurobi 9.5.2: a Gurobi license is needed to run Coco (https://www.gurobi.com/). Inside the conda environment run:
 ```
 python -m pip install gurobipy
 ```
+* Seaborn 0.12.0:
+```
+conda install -c anaconda seaborn
+```
 
-### Dependencies
+#### Dependencies
 
 * Python 3.10.6
-* Geopandas 0.11.1
 * Pandas 1.4.4
 * Matplotlib 3.5.3
 * NetworkX 2.8.6
 * Seaborn 0.12.0
-To run go to code directory:
 
-### How to run
+
+To run the scripts in the scripts folder, geopandas is needed. These scripts work only on the data provided in this repository.
+* Geopandas 0.11.1:
+```
+conda install --channel conda-forge geopandas
+```
+
+To run go to code directory:
 ```
 cd src
 ```
+
+### Running Coco
 To run Coco enter:
 ```
 python main.py -strategy <strategy_name> [strategy params]
