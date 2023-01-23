@@ -94,19 +94,19 @@ Alternatively, one connectivity matrix can be specified
 --con-matrix FILE
 ```
 
-In case the selected metric, e.g., equivalent centrality, requires attribute data for each planning unit, this should be provided using (optional):
+In case the selected metric, e.g., equivalent connectivity, requires attribute data for each planning unit, this should be provided using (optional):
 ```
 --pu-data FILE
 ```
 #### Metric parameters
 
-We currently have the following metrics installed: indegree, outdegree, betweenness centrality and equivalent centrality. For more information on each metric, see the documentation in the `doc` folder. We are expanding the number of metrics Coco has installed, for requests feel free to contact me.
+We currently have the following metrics installed: indegree, outdegree, betweenness centrality and equivalent connectivity. For more information on each metric, see the documentation in the `doc` folder. We are expanding the number of metrics Coco has installed, for requests feel free to contact me.
 
 To specify the metric(s) used (required):
 ```
 -metric {betcent, indegree, outdegree, ec}
 ```
-Coco can run multiple metrics at the same time. To do this repeat the parameter for each metric you want to run, e.g., if we want to run betweenness centrality and equivalent centrality:
+Coco can run multiple metrics at the same time. To do this repeat the parameter for each metric you want to run, e.g., if we want to run betweenness centrality and equivalent connectivity:
 ```
 -metric betcent -metric ec
 ```

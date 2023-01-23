@@ -38,7 +38,7 @@ Contains the occurrence, amount, of each feature in each planning unit. If a fea
 The `puvspr.dat` is required and should be located in the input folder
 
 #### Planning unit attribute data (`<file_name>.csv`):
-This optional `csv` file contains attribute data of planning units in case this is required by metrics. Currently, this is only needed for the equivalent centrality, which needs attribute data per feature per planning unit
+This optional `csv` file contains attribute data of planning units in case this is required by metrics. Currently, this is only needed for the equivalent connectivity, which needs attribute data per feature per planning unit
   * `habitat`: feature id (required)
   * `pu`: pu id (required)
   * `amount`: the values of the attribute for the feature in the planning unit (required)
@@ -46,20 +46,20 @@ This optional `csv` file contains attribute data of planning units in case this 
 ### Connectivity Data
 Connectivity data is needed for the connectivity metrics. Coco accepts connectivity data in matrix or edgelist format. The information contained in both formats are the same, the only difference is that they are stored in another datastructure. Note that a matrix and a basic edgelist can only contain data for one feature, while a habitat edgelist can contain data for multiple features. We advice to use a habitat edgelist in case connectivity data is supplied per feature.
 
-#### Edgelist (`<file_name`.csv):
+#### Edgelist (`<file_name>`.csv):
 The edgelist contains data from source (`pu1`) to destination (`pu2`). Meaning that the values per row indicate the connectivity value from planning unit `pu1` to planning unit `pu2`. Note that rows containing zero values should not be in the edgelist and should be removed before use.
   * `pu1`: pu id of the source planning unit (required)
   * `pu2`: pu id of the destination planning unit (required)
   * `value`: value to be used in the metrics on the link between planning unit `pu1` and planning unit `pu2`
 
-#### Edge List with Habitat ('<file_name'.csv):
+#### Edge List with Habitat ('<file_name>'.csv):
 The edgelist with habitat is similar to the edgelist. The only distinction is that the file can contain connectivity data for different features.
   * `habitat`: feature id indicating the feature the value relates to (required)
   * `pu1`: pu id of the source planning unit (required)
   * `pu2`: pu id of the destination planning unit (required)
   * `value`: value to be used in the metrics on the link between planning unit `pu1` and planning unit `pu2` considering feature `habitat`
 
-#### Connectivity Matrix (`<file_name`.csv):
+#### Connectivity Matrix (`<file_name>`.csv):
 The connectivity matrix is an equivalent alternative to the edgelist with a different datastructure. In the connectivity matrix we have one row per source and one column per destination. Each cell contains information about the connectivity from source to destination. Thus the value in row `i` and column `j` contains data on the link going from planning unit `i` to planning unit `j`.
 
 The first row of the matrix contains the pu id's of each planning unit to be considered. This order is assumed to be the same for each row.
