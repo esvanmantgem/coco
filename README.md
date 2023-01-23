@@ -44,7 +44,7 @@ cd src
 
 To run Coco enter:
 ```
-python main.py -strategy <strategy_name> [strategy params]
+python main.py -strategy <strategy_name> [global params] [strategy params] [gurobi params]
 ```
 
 ### Coco RSP variants
