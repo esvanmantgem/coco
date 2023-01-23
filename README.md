@@ -94,7 +94,7 @@ Alternatively, one connectivity matrix can be specified
 --con-matrix FILE
 ```
 
-In case the selected metric, e.g., equivalent centrality, requires input data for each planning unit, this should be provided using (optional):
+In case the selected metric, e.g., equivalent centrality, requires attribute data for each planning unit, this should be provided using (optional):
 ```
 --pu-data FILE
 ```
