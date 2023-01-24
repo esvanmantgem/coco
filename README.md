@@ -34,17 +34,11 @@ To run the scripts in the scripts folder, geopandas is needed. These scripts wor
 conda install --channel conda-forge geopandas
 ```
 
-
 ## Running Coco
 
 Go to the `src` folder:
 ```
 cd src
-```
-
-To run Coco enter:
-```
-python main.py -strategy <strategy_name> [global params] [strategy params] [gurobi params]
 ```
 
 ### Coco RSP variants
@@ -53,10 +47,21 @@ Currently, Coco has three RSP variants installed:
 * RSP with Cost Connectivity (RSP-CC)
 * RSP with Connectivity (RSP-Con).
 
+To get help on how to run a specific variant, type:
 ```
--strategy {cf, cost-con, con}
+python coco.py --help
 ```
-Where `cf` is RSP-CF, `cost-con` is RSP-CC and `con` is RSP-Con
+
+To get help with the parameters of a specific variant `RSP-VARIANT`, type:
+```
+python coco.py RSP-VARIANT --help
+```
+
+To run Coco enter:
+```
+python coco.py RSP-VARIANT [global params] [variant params] [gurobi params]
+```
+Below we give a detailed explanation of each parameter
 
 ### Global parameter settings
 The following parameters are available for all RSP variants:
