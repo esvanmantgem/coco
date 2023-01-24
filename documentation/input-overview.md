@@ -1,13 +1,24 @@
 # Input files
 We require input files very similar to Marxan. The name of each file should be as specified in this document. The heading of each file, i.e., the name of each column, should be exactly as specified.
 
-Each file description begins with a description of the data follows by the filename and file extention. Then a list follows where each item in the list specifies the column name and a description of the values, possible properties and an indication if this column is required. The structure of each file description is as follows:
+For an example of each file type, see the `example_files` folder.
 
-#### Name of the data (`<filename>`):
+Each file description begins with a description of the data follows by the filename and file extension. Then a list follows where each item in the list specifies the column name and a description of the values, possible properties and an indication if this column is required. The structure of each file description is as follows:
+
+#### Name of the data (`<filename>.<extension`):
 Short description of the data.
 File format specification:
   * `<column_name1>`: `<description of the values>`
   * `<column_name2>`: `<description of the values>`
+
+Both `.dat` and `.cvs` files should be comma separated. This means the a filled called `<filename>.dat` or `<filename>.csv` has the following structure:
+```
+column_name1, column_name2
+v1, v2
+v3, v4
+...
+vx, vy
+```
 
 #### Conservation Features (`spec.dat`):
 Contains the features to be considered for conservation. Each feature has a unique id and the target to be reached, either set as a proportion or the target value directly. Either target or prop is required.
