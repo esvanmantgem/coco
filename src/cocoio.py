@@ -1,9 +1,6 @@
 import errno, sys, os, pathlib
 import pandas as pd
-
-SPEC_F = 'spec.dat'
-PU_F = 'pu.dat'
-PUVSPR_F = 'puvspr.dat'
+import constant as c
 
 def process_path(path):
     ''' check if path exists, raise exception otherwise '''
@@ -26,10 +23,10 @@ def open_file(path, filename):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), fullpath)
 
 def read_standard_files(path):
-    species = pd.read_csv(open_file(path, SPEC_F))
-    pu = pd.read_csv(open_file(path, PU_F))
-    puvspr = pd.read_csv(open_file(path, PUVSPR_F))
-    return (species, pu, puvspr)
+    features = pd.read_csv(open_file(path, c.FEAT_F))
+    pu = pd.read_csv(open_file(path, c.PU_F))
+    pvf = pd.read_csv(open_file(path, c.PVF_F))
+    return (features, pu, pvf)
 
 def read_connectivity_data(path, args):
     ''' check connectivity data type and return read file '''
@@ -37,8 +34,8 @@ def read_connectivity_data(path, args):
     if args.con_matrix:
         for matrix in args.con_matrix:
             files.append(read_connectivity_matrix(open_file(path, matrix)))
-    elif args.habitat_edgelist:
-        for edgelist in args.habitat_edgelist:
+    elif args.feature_edgelist:
+        for edgelist in args.feature_edgelist:
             files.append(pd.read_csv(open_file(path, edgelist)))
     elif args.con_edgelist:
         for edgelist in args.con_edgelist:

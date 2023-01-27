@@ -1,5 +1,6 @@
 import pandas as pd
 import networkx as nx
+import constant as c
 import conmetric
 import condata
 
@@ -15,13 +16,6 @@ class Connectivity:
         self.metrics = []
         self.complete_graph = complete_graph
 
-    #def __init__(self, strategy, weight, target):
-    #    self.strategy = strategy
-    #    self.weight = weight
-    #    # target is boolean flag: true if target setting, false if proportion setting
-    #    self.target = target
-    #    self.connectivity_data = []
-
     def get_connectivity_data(self):
         return self.connectivity_data
 
@@ -29,14 +23,12 @@ class Connectivity:
         for metric in metrics:
             self.metrics.append(metric)
             for data in self.connectivity_data:
-            #print("for data: ", data.name)
                 data.set_connectivity_metrics(metric)
 
     def set_connectivity_matrix(self, matrix, name, metrics, pu_data):
         temp_data = condata.ConData(name)
         temp_data.set_connectivity_matrix(matrix, metrics, pu_data)
         self.connectivity_data.append(temp_data)
-        #self.set_metrics(metrics)
         self.metrics = metrics
 
     #TODO check if this works
@@ -46,29 +38,25 @@ class Connectivity:
         self.connectivity_data.append(temp_data)
         self.metrics = metrics
 
-    def set_habitat_connectivity_edgelist(self, edgelist, metrics, pu_data):
-        habitat = [y for x, y in edgelist.groupby('habitat')]
-        for h in habitat:
+    def set_feature_connectivity_edgelist(self, edgelist, metrics, pu_data):
+        feature = [y for x, y in edgelist.groupby(c.HEL_FID)]
+        for h in feature:
             nh = pd.DataFrame(h).reset_index(drop=True)
-            name = nh['habitat'][0]
+            name = nh[c.HEL_FID][0]
             temp_data = condata.ConData(name)
             node_data = None if pu_data is None else self.set_pu_data(pu_data, name)
-            temp_data.set_connectivity_habitat_edgelist(h, metrics, self.complete_graph, node_data)
+            temp_data.set_connectivity_feature_edgelist(h, metrics, self.complete_graph, node_data)
             self.connectivity_data.append(temp_data)
         self.metrics = metrics
 
     def set_pu_data(self, pu_data, hab_find):
-        habitat = [y for x, y in pu_data.groupby('habitat')]
-        for h in habitat:
+        feature = [y for x, y in pu_data.groupby(c.ATTR_FID)]
+        for h in feature:
             nh = pd.DataFrame(h).reset_index(drop=True)
-            name = nh['habitat'][0]
+            name = nh[c.ATTR_FID][0]
             if name == hab_find:
                 return h
         return None
-            #nh = pd.DataFrame(h).reset_index(drop=True)
-            #name = nh['habitat'][0]
-            #condata = self.get_condata(name)
-            #condata.set_pu_data(h)
 
     def get_condata(self, name):
         for data in self.connectivity_data:
@@ -88,7 +76,7 @@ class Connectivity:
         metrics = []
         for data in self.connectivity_data:
             metric_values = data.get_metric_values(name)
-            normalized_data = (metric_values['value'] - metric_values['value'].min())/(metric_values['value'].max() - metric_values['value'].min())
+            normalized_data = (metric_values[c.MET_VAL] - metric_values[c.MET_VAL].min())/(metric_values[c.MET_VAL].max() - metric_values[c.MET_VAL].min())
             metrics.append(normalized_data)
         return metrics
 

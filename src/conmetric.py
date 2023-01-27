@@ -1,5 +1,6 @@
 import pandas as pd
 import networkx as nx
+import constant as c
 import sys
 
 class ConnectivityMetric:
@@ -20,50 +21,49 @@ class ConnectivityMetric:
         self.orig_values = None
 
     def calculate_standards(self):
-        self.sum = self.values['value'].sum()
-        self.mean = self.values['value'].mean()
-        self.median = self.values['value'].median()
-        self.min = self.values['value'].min()
-        self.max = self.values['value'].max()
-        self.min_threshold = self.values['value'].min()
-        self.max_threshold = self.values['value'].max()
+        self.sum = self.values[c.MET_VAL].sum()
+        self.mean = self.values[c.MET_VAL].mean()
+        self.median = self.values[c.MET_VAL].median()
+        self.min = self.values[c.MET_VAL].min()
+        self.max = self.values[c.MET_VAL].max()
+        self.min_threshold = self.values[c.MET_VAL].min()
+        self.max_threshold = self.values[c.MET_VAL].max()
 
     def set_target(self, target):
         self.target = target
 
     def indegree(self):
-        print("------------calcuting indegree values -----------------")
+        print("--- calculating indegree values ---")
         temp_values = []
         for unit in self.g.nodes():
             temp_values.append(self.g.in_degree(unit))
-        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = ['pu', 'value'])
+        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = [c.MET_PID, c.MET_VAL])
         print(self.values)
         self.calculate_standards()
 
     def outdegree(self):
-        print("------------calcuting outdegree values -----------------")
+        print("--- calculating outdegree values ---")
         temp_values = []
         for unit in self.g.nodes():
             temp_values.append(self.g.out_degree(unit))
-        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = ['pu', 'value'])
+        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = [c.MET_PID, c.MET_VAL])
         print(self.values)
         self.calculate_standards()
 
-    def betcent(self):
-        print("------------calcuting betcent values -----------------")
+    def bc(self):
+        print("--- calculating BC values ---")
         all_betcent = nx.betweenness_centrality(self.g, normalized=False, weight=None)
         #all_betcent_norm = nx.betweenness_centrality(g, normalized=True)
         #print(all_betcent_norm)
         temp_values = []
         for k,v in all_betcent.items():
-            print(k ,v)
             temp_values.append(v)
-        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = ['pu', 'value'])
-        #print(self.values)
+        self.values = pd.DataFrame(list(zip(self.g.nodes(), temp_values)), columns = [c.MET_PID, c.MET_VAL])
+        print(self.values)
         self.calculate_standards()
 
     def ec(self):
-        print("------------calcuting EC values -----------------")
+        print("---calculating EC values ---")
         '''Calculate the EC metric: for each pair of pu (i.e., edge):
         for each node i: for each neighbor j: a_i * a_j * p_ij
         Where a_i is qualitative value of pu i and p_ij a quantification of the
@@ -75,29 +75,18 @@ class ConnectivityMetric:
         i_s = []
         j_s = []
         vals = []
-        for i, a_i in nx.get_node_attributes(self.g, "value").items():
+        for i, a_i in nx.get_node_attributes(self.g, c.NODE_VAL).items():
             for j in self.g.neighbors(i):
-                a_j =  self.g.nodes[j]["value"]
-                p_ij = self.g.edges[(i,j)]["value"]
+                a_j =  self.g.nodes[j][c.NODE_VAL]
+                p_ij = self.g.edges[(i,j)][c.EDGE_VAL]
                 val = a_i * a_j * p_ij
                 i_s.append(i)
                 j_s.append(j)
                 vals.append(val)
-        self.values = pd.DataFrame(list(zip(i_s, j_s, vals)), columns = ['pu1', 'pu2', 'value'])
+        self.values = pd.DataFrame(list(zip(i_s, j_s, vals)), columns = [c.MET_PID1, c.MET_PID2, c.MET_VAL])
         print(self.values)
         # TODO check "for each map"
         self.calculate_standards()
-#        print(self.values['value'])
-#for neighbor in G.neighbors(x):
-#    print(G.nodes[neighbor]["time"])
-        #for node, weight in nx.get_edge_attributes(g, "value"):
-        #    print("node: ", node, " has weight ", weight)
-        #    for n, k in g.neighbors(node):
-        #        print(n, k)
-        #print(nx.get_node_attributes(g, "value"))
-#        for edge, weight in nx.get_edge_attributes(g, "value").items():
-#            print("edge:", edge)
-#            print("weight:", weight)
 
     def set_connectivity_metrics(self):
         do = f"{self.metric_type}"
@@ -109,40 +98,34 @@ class ConnectivityMetric:
 
     def drop_smaller(self, threshold):
         self.min_threshold = threshold
-        self.values['value'] = self.values['value'].where(self.values['value'] >= self.min_threshold, other=0)
-        #self.values = self.values[self.values['value'] >= threshold]
+        self.values[c.MET_VAL] = self.values[c.MET_VAL].where(self.values[c.MET_VAL] >= self.min_threshold, other=0)
 
     def drop_greater(self, threshold):
         self.max_theshold = threshold
-        #self.values = self.values[self.values['value'] <= threshold]
-        self.values['value'] = self.values['value'].where(self.values['value'] <= self.max_threshold, other=0)
+        self.values[c.MET_VAL] = self.values[c.MET_VAL].where(self.values[c.MET_VAL] <= self.max_threshold, other=0)
 
     def drop_smaller_type(self, type_name):
         self.min_threshold = self.get_type(type_name)
-        #self.values = self.values[self.values['value'] >= self.min_threshold]
-        #sdf[cols2] = df[cols2].where(df[cols]<=0.9, other=0)
-        self.values['value'] = self.values['value'].where(self.values['value'] >= self.min_threshold, other=0)
-        #ou can use df.where(cond, other) to replace the values with other where cond == False.
-        #print(self.values)
+        self.values[c.MET_VAL] = self.values[c.MET_VAL].where(self.values[c.MET_VAL] >= self.min_threshold, other=0)
 
     def drop_greater_type(self, type_name):
         self.max_threshold = self.get_type(type_name)
-        self.values['value'] = self.values['value'].where(self.values['value'] <= self.max_threshold, other=0)
-        #self.values = self.values[self.values['value'] <= self.max_threshold]
+        self.values[c.MET_VAL] = self.values[c.MET_VAL].where(self.values[c.MET_VAL] <= self.max_threshold, other=0)
 
     def get_type(self, type_name):
-        if type_name == 'mean':
+        if type_name == c.MEAN:
             return self.mean
-        elif type_name == 'median':
+        elif type_name == c.MEDIAN:
             return self.median
-        elif type_name == 'min':
+        elif type_name == c.MIN:
             return self.min
-        elif type_name == 'max':
+        elif type_name == c.MAX:
             return self.max
         else:
             #shouldn't get here
-            return None
+            error = "Error: type unknown"
+            sys.exit(error)
 
     def set_values_to_one(self):
         self.orig_values = self.values.copy()
-        self.values['value'] = self.values['value'].where(self.values['value'] == 0, other=1)
+        self.values[c.MET_VAL] = self.values[c.MET_VAL].where(self.values[c.MET_VAL] == 0, other=1)
