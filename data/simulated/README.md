@@ -1,0 +1,1 @@
+This folder contains the simulated data used to run performance tests on Coco. The data is generated using ConGen, a tool created for the generation of conservation planning datasets. The tool can be found on

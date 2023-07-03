@@ -45,8 +45,11 @@ class SolutionArea:
             else:
                 t = conservation.features.loc[conservation.features[c.FEAT_ID] == s, c.FEAT_TARGET].item()
             target.append(t)
-        data = { c.FEATURES: spec, c.TOTAL_F: total, c.TOTAL_F: target, c.REACHED_F: reached }
+        data = { c.FEATURES: spec, c.TOTAL_F: total, c.TARGET_F: target, c.REACHED_F: reached }
         self.features_total = pd.DataFrame(data)
+        print("solutionsnnnnnnnnnnn")
+        print(data)
+        print(self.features_total)
         return self.features_total
 
     def print_metric_values(self, metric):
@@ -122,9 +125,17 @@ class SolutionArea:
             cvalues.rename(columns={'x': 'x2'}, inplace=True)
             return cvalues[c.MET_VAL]
         else:
-            metric = condata.get_metric(metric_name)
-            sol_metric = ConnectivityMetric(metric_name, metric.g)
-            sol_metric.set_connectivity_metrics()
+
+            metric = connectivity.get_metric(metric_name)
+            g = connectivity.g
+            sol_metric = ConnectivityMetric(metric_name)
+            sol_metric.g = g
+            sol_metric.set_connectivity_metrics(sol_metric.g)
+
+            #metric = condata.get_metric(metric_name)
+            #sol_metric = ConnectivityMetric(metric_name, metric.g)
+            #sol_metric.set_connectivity_metrics()
+
             cvalues = sol_metric.values.merge(co_best[c.PUX_X], left_on=c.MET_PID, right_on=co_best[c.PUX_PID])
             cvalues = cvalues[cvalues[c.PUX_X] > 0]
             return cvalues[c.MET_VAL]

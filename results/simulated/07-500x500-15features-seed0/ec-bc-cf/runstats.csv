@@ -1,0 +1,26 @@
+name,value
+solver_time,3546.48987531662
+total_time,3595.3960683345795
+obj_value,24892.0
+gap_to_opt,0.0029728426803792385
+total_cost,24892.0
+cmd,RSP-CF
+gap,0.05
+time_limit,
+gurobi_log,
+gurobi_threads,
+gurobi_mem,
+input,../../pa-lukas-rose/results/500x500-15features-seed0
+output,../tests/brandt/congen/500x500-15features-seed0/ec-bc-cf
+metric,"['ec', 'bc']"
+metric_prop,0.2
+metric_target,
+metric_min,
+metric_min_type,
+metric_max,
+metric_max_type,
+con_matrix,
+con_edgelist,
+feature_edgelist,['../../pa-lukas-rose/results/500x500-15features-seed0/probability.csv']
+pu_data,../../pa-lukas-rose/results/500x500-15features-seed0/quality.csv
+complete_graph,mean

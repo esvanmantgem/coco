@@ -1,15 +1,40 @@
+# Copyright (c) 2022, Eline van Mantgem
+#
+# This file is part of Coco.
+#
+# Coco is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Coco is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Coco. If not, see <http://www.gnu.org/licenses/>.
+
 import argparse
 
-LICENSE = """
-Copyright (C) Eline van Mantgem
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-Coco is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.\n
-"""
-
 def parse_args():
+    """
+    Processes all arguments using the ArgParse library
+
+    Parameters
+    ----------
+    -
+
+    Returns
+    -------
+    A Namespace containing all set parameters
+    """
 
     coco_parser = argparse.ArgumentParser(add_help=False)
+
+    ###
+    # Gurobi related arguments
+    ###
     coco_parser.add_argument('--gap', type=float, help='Set the allowed gap to the optimal')
     coco_parser.add_argument('--time-limit', type=int, help='Time limit to restrict the runtime of Gurobi')
     coco_parser.add_argument('--gurobi-log', type=str, help='File path to store Gurobi log in')
@@ -17,9 +42,19 @@ def parse_args():
     coco_parser.add_argument('--gurobi-mem', type=float, help='The amount of memory (in GB) to restrict Gurobi to')
 
     parser = argparse.ArgumentParser("Coco", formatter_class=argparse.RawTextHelpFormatter, description="Finding optimal solutions to variations of the RSP including connectivity")
-
-
     subparsers = parser.add_subparsers(title='Coco subcommands', dest='cmd', description='for specific help on RSP variants use: python coco.py {cmd} --help')
+
+
+    ###
+    # Pareto Front parser
+    ###
+    pf = subparsers.add_parser("PF", parents=[coco_parser])
+    #pf_input = pf.add_mutually_exclusive_group(required=True)
+    #pf_input.add_argument('--input', type=str, help='Folder containing the input files')
+    #pf_input.add_argument('--config', type=str, help='File containing all configuration settings')
+    pf.add_argument('--config', type=str, required=True, help='Json file containing all configuration settings for PF, see documentation')
+    pf.add_argument('--output', type=str, required=True, help='Folder to store result files in')
+
 
     ###
     # RSP-CF parser
@@ -72,15 +107,12 @@ def parse_args():
     cc_con_data.add_argument('--con-edgelist', type=str, action='append', help='File containing the connectivity edgelist')
     cc_con_data.add_argument('--feature-edgelist', type=str, action='append', help='File containing the connectivity feature edgelist')
     cc.add_argument('--pu-data', type=str, help='File containing attribute values for planning units per feature')
-
-    #cc.add_argument('--complete-graph', action='store_true', help='Indicates the data contains a complete graph')
-    #cc.add_argument('--complete-graph', action='store_true', help='Indicates the data contains a complete graph')
     cc.add_argument('--complete-graph', choices=['mean', 'median'], help='Indicates the data contains a complete graph, all values below should be dropped')
 
     ###
     # RSP-Con parser
     ###
-    con = subparsers.add_parser("RSP-Con", parents=[coco_parser])
+    con = subparsers.add_parser("RSP-FCC", parents=[coco_parser])
     con.add_argument('--input', type=str, required=True, help='Folder containing the input files')
     con.add_argument('--output', type=str, required=True, help='Folder to store result files in')
     con.add_argument('--metric', action='append', required=True, choices=['ec', 'indegree', 'outdegree', 'bc'], help='Which connectivity metric to use')
@@ -99,8 +131,6 @@ def parse_args():
     con_data.add_argument('--con-edgelist', type=str, action='append', help='File containing the connectivity edgelist')
     con_data.add_argument('--feature-edgelist', type=str, action='append', help='File containing the connectivity feature edgelist')
     con.add_argument('--pu-data', type=str, help='File containing attribute values for planning units per feature')
-
-    #con.add_argument('--complete-graph', action='store_true', help='Indicates the data contains a complete graph')
     con.add_argument('--complete-graph', choices=['mean', 'median'], help='Indicates the data contains a complete graph, all values below should be dropped')
 
     ###

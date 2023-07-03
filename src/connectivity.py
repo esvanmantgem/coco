@@ -38,6 +38,7 @@ class Connectivity:
         self.connectivity_data.append(temp_data)
         self.metrics = metrics
 
+    #def set_feature_connectivity_edgelist(self, edgelist, metrics, pu_data, inverted):
     def set_feature_connectivity_edgelist(self, edgelist, metrics, pu_data):
         feature = [y for x, y in edgelist.groupby(c.HEL_FID)]
         for h in feature:
@@ -45,6 +46,7 @@ class Connectivity:
             name = nh[c.HEL_FID][0]
             temp_data = condata.ConData(name)
             node_data = None if pu_data is None else self.set_pu_data(pu_data, name)
+            #temp_data.set_connectivity_feature_edgelist(h, metrics, self.complete_graph, node_data, inverted)
             temp_data.set_connectivity_feature_edgelist(h, metrics, self.complete_graph, node_data)
             self.connectivity_data.append(temp_data)
         self.metrics = metrics

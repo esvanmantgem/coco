@@ -26,6 +26,10 @@ class ConData:
             self.set_connectivity_metrics(metric_type, g, node_values)
 
     # TODO complete graph for Betcent fix: now only median drop, create param to set variable
+    # Now: we drop LOW values (aka not the resistance values). This is implemented to use the same
+    # edgeweights for BC dropping as for the EC probability of connectivity. This should be rewritten
+    # to require 2 different datasets: 1.resistance values per edge for BC and 2.probability of connectivity of
+    # each edge
     def set_connectivity_feature_edgelist(self, con_feature_edgelist, metrics, complete_graph, node_values):
         self.feature_edgelist = con_feature_edgelist.drop(labels=c.HEL_FID, axis=1)
         self.feature_edgelist = self.feature_edgelist.loc[self.feature_edgelist[c.HEL_VAL] != 0].reset_index(drop=True)
