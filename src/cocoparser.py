@@ -112,7 +112,7 @@ def parse_args():
     ###
     # RSP-Con parser
     ###
-    con = subparsers.add_parser("RSP-FCC", parents=[coco_parser])
+    con = subparsers.add_parser("RSP-CBC", parents=[coco_parser])
     con.add_argument('--input', type=str, required=True, help='Folder containing the input files')
     con.add_argument('--output', type=str, required=True, help='Folder to store result files in')
     con.add_argument('--metric', action='append', required=True, choices=['ec', 'indegree', 'outdegree', 'bc'], help='Which connectivity metric to use')

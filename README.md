@@ -45,7 +45,7 @@ cd src
 Currently, Coco has three RSP variants installed:
 * RSP with Connectivity Features (RSP-CF)
 * RSP with Cost Connectivity (RSP-CC)
-* RSP with Fixed Cost Connectivity (RSP-FCC).
+* RSP with Cost Budget and Connectivity (RSP-CBC).
 
 To get help on how to run a specific variant, type:
 ```
@@ -168,8 +168,8 @@ To set the weight of the cost (optional):
 ```
 Balancing this correctly requires some knowledge on the data and metric values. During optimization the metric values are min max normalized and thus can have values [0,1] on each vertex or edge depening on the metric. Setting the cost too low compared to the metric values will result in a negative objective value, which should be prevented at all times. Setting the metric values too low (especially in case of very small values) result in a longer runtime to find the optimal result.
 
-### RSP-FCC parameters
-The following parameters are only available for the RSP-FCC variant. It is required to set either one of the values. If a fixed cost is wanted, setting `-max-cost` is sufficient, since the optimizer will automatically maximize the connectivity values by taking as many planning units as possible, i.e., maximize the cost.
+### RSP-CBC parameters
+The following parameters are only available for the RSP-CBC variant. It is required to set either one of the values. If a fixed cost is wanted, setting `-max-cost` is sufficient, since the optimizer will automatically maximize the connectivity values by taking as many planning units as possible, i.e., maximize the cost.
 
 To set the max cost use:
 ```
